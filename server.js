@@ -1,7 +1,9 @@
 const http=require("http"),fs=require("fs"),path=require("path"),{Pool}=require("pg");
 const pool=new Pool({connectionString:process.env.DATABASE_URL,ssl:{rejectUnauthorized:false}});
 const PW=process.env.APP_PASSWORD||"";
-const page=fs.readFileSync(path.join(__dirname,"public","index.html"));
+const find=["public/index.html","index.html"].map(p=>path.join(__dirname,p)).find(p=>fs.existsSync(p));
+if(!find){console.error("Lipseste index.html (pune-l in repo, langa server.js)");process.exit(1)}
+const page=fs.readFileSync(find);
 const send=(res,c,b,t)=>{res.writeHead(c,{"Content-Type":t||"application/json; charset=utf-8","Cache-Control":"no-store"});res.end(b)};
 http.createServer(async(req,res)=>{
  try{
